@@ -14,7 +14,9 @@ public class Restaurant {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
+        HomeFrame homeFrame = new HomeFrame();
+        homeFrame.setDefaultCloseOperation(2);
+        homeFrame.setVisible(true);
     }
     
 }

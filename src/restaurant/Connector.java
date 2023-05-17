@@ -8,7 +8,7 @@ import java.sql.*; //Importing java.sql package
 
   public class Connector {
 
-      public Connection connect() throws SQLException {
+      public static Connection connect() throws SQLException {
         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/restaurant", "root", "");
         return connection;
       }
