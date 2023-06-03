@@ -22,7 +22,7 @@ public class MenuFrame extends JFrame {
     private JButton cartButton;
     private final List<Meals> cartItems;
 
-    public MenuFrame() {
+    public MenuFrame(int userId) {
         super("Menu");
         setSize(600,600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -42,7 +42,11 @@ public class MenuFrame extends JFrame {
         cartButton = new JButton("View Cart");
 
         // Add action listener to cart button
-        cartButton.addActionListener(e -> JOptionPane.showMessageDialog(MenuFrame.this, "Cart button clicked!"));
+        cartButton.addActionListener((e) -> {
+            Cart cartFrame = new Cart(cartItems, userId);
+            cartFrame.setDefaultCloseOperation(2);
+            cartFrame.setVisible(true);
+        });
 
         // Create panel for cart button
         JPanel cartPanel = new JPanel();
@@ -89,8 +93,9 @@ public class MenuFrame extends JFrame {
                 String name = resultSet.getString("Name");
                 String description = resultSet.getString("Description");
                 double price = resultSet.getDouble("Price");
+                String imageUrl = resultSet.getString("imageUrl");
 
-                Meals meal = new Meals(mealID, name, description, price);
+                Meals meal = new Meals(mealID, name, description, price, imageUrl);
                 meals.add(meal);
             }
 
@@ -105,38 +110,41 @@ public class MenuFrame extends JFrame {
     }
 
     private JPanel createMealPanel(Category category, Meals meal) {
-        JPanel mealPanel = new JPanel();
-        mealPanel.setLayout(new BoxLayout(mealPanel, BoxLayout.Y_AXIS));
-        mealPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+    JPanel mealPanel = new JPanel();
+    mealPanel.setLayout(new GridBagLayout());
+    mealPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 
-        JLabel nameLabel = new JLabel(meal.getName());
-        nameLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    JPanel contentPanel = new JPanel();
+    contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+    contentPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel descriptionLabel = new JLabel(meal.getDescription());
-        descriptionLabel.setForeground(Color.GRAY);
-        descriptionLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    ItemPanel item = new ItemPanel(meal.getName(), meal.getImageUrl(), meal.getPrice());
+    item.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel priceLabel = new JLabel("$" + meal.getPrice());
-        priceLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        priceLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    JButton addButton = new JButton("Add to Cart");
+    addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+    addButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            cartItems.add(meal);
+            JOptionPane.showMessageDialog(MenuFrame.this, meal.getName() + " added to cart!");
+        }
+    });
+    contentPanel.add(item);
+    contentPanel.add(addButton);
 
-        JButton addButton = new JButton("Add to Cart");
-        addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cartItems.add(meal);
-                JOptionPane.showMessageDialog(MenuFrame.this, meal.getName() + " added to cart!");
-            }
-        });
-        
-        mealPanel.add(nameLabel);
-        mealPanel.add(descriptionLabel);
-        mealPanel.add(priceLabel);
-        mealPanel.add(addButton);
-        mealPanel.add(Box.createVerticalGlue());
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridx = 0; // Set grid x position to 0
+    gbc.gridy = GridBagConstraints.RELATIVE; // Each component is placed in a new row
+    gbc.fill = GridBagConstraints.HORIZONTAL; // Components will fill the horizontal space
+    gbc.weightx = 1.0; // Components will take up the full width
+    gbc.insets = new Insets(10, 0, 10, 0); // Set the desired spacing (top, left, bottom, right);
 
-        return mealPanel;
-    }
+    mealPanel.add(contentPanel, gbc); // Add the contentPanel to mealPanel
+
+    return mealPanel;
+}
+
+
+
 }

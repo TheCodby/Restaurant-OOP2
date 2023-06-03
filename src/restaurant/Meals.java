@@ -13,12 +13,14 @@ public class Meals {
     private String name;
     private String description;
     private double price;
+    private String imageUrl;
 
-    public Meals(int mealID, String name, String description, double price) {
+    public Meals(int mealID, String name, String description, double price, String imageUrl) {
         this.mealID = mealID;
         this.name = name;
         this.description = description;
         this.price = price;
+        this.imageUrl = imageUrl;
     }
 
     public int getMealID() {
@@ -51,5 +53,12 @@ public class Meals {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
